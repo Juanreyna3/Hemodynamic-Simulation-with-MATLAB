@@ -1,0 +1,79 @@
+clc;
+% Part 3 Unsteady Flow
+ 
+ 
+%vertical coordinate y as a function of time
+t=[0:.1:3]; %s
+w=2*pi;
+ 
+%expression for y(t)
+y=(1.5+2.5*sin(t.*w))/0.8;   
+plot(t,y,'ro-')
+title("Vertical Coordinate y as a function of time")
+xlabel('time (s)');
+ylabel('y (m)');
+ 
+ 
+ 
+%Streamline superimposed onto vector plot
+%meshgrid with Cartesian coordinates
+[xv,yv]= meshgrid(0:1:6, -1:1:5);
+vs=VideoWriter('streamlines.avi');      %creates file to store video
+vs.FrameRate= (5);                      %sets frame rate to 5 frames per second
+open(vs);                               %opens file
+ 
+%time-dependant vector plot of velocity field
+for t= 0:0.25:0.75 %s
+    u= 0.5 + xv.*0.8;
+    v= 1.5 + 2.5*sin(t.*w) - yv.*0.8;
+    quiver(xv,yv,u,v);
+    daspect([1,1,1]);
+    hold on
+    F= (v.*u);      %levelset function for streamlines
+    C=0:1:19;       %creates 20 streamlines
+    contour(xv,yv,F,C,'LineColor','b')    %superimposes streamlines onto vector field
+    axis([0 6 -1 5])
+    title("Streamlines at t = "+t+"s")
+    xlabel('x(m)')
+    ylabel('y(m)')
+    drawnow
+    hold 
+    pause(0.5)
+    writeVideo(vs,getframe(gcf));   %adds image to video 
+end
+close(vs);      %closes file
+clc;
+ 
+ 
+%Pathlines superimposed onto vector field
+%meshgrid with cartesian coordinates used for pathlines
+[x,y]= meshgrid(0:.1:6, -1:.1:5);
+%meshgrid with cartesian coordinates used for vector field
+x0=0;t0=0;
+vp=VideoWriter('pathlines.avi');       %creates file called pathlines
+vp.FrameRate= (5);                      %sets frame rate to 5 frames/sec
+open(vp);                               %opens file
+%time-dependant vector plot of velocity field
+for t=0:0.1:3
+    u= 0.5 + xv.*0.8;
+    v= 1.5 + 2.5*sin(t.*w) - yv.*0.8;
+    quiver(xv,yv,u,v);    
+    daspect([1,1,1]);
+    for y0= 0:1:4
+        hold on
+       %particle tracking function:
+        plot((0.625*(exp(0.8.*t))-0.625),(y0+(3.125/(0.64+w.^2))*((w+0.8*sin(w.*(t)))-(w.*cos(w.*(t))))), 'ok', 'markerface', 'm');
+        
+        %level set function
+        F = (y0-y+(3.125/(0.64+w.^2))*((w+0.8*sin(w.*( 1.25*log(1.6*x+1))))-(w.*cos(w.*( 1.25*log(1.6.*x+1))))));
+        contour(x,y,F,[0,0],'LineColor','k')    %superimposes pathlines onto vector field
+        axis([0 6 -0.5 5])
+        title("Pathlines at t = "+t+"s")
+        xlabel('x(m)')
+        ylabel('y(m)')
+    hold off
+    end
+    drawnow
+    writeVideo(vp,getframe(gcf));   %adds figure to file
+end
+close(vp);          %closes f
