@@ -1,0 +1,42 @@
+clear all;
+clc;
+%%finding the location of the stagnant point in flow field%%
+% stagnant point is when velocity equals zero V= u+v where 
+% u and v equal zero
+syms x y % creates variables x and y 
+u=0; % defines the value of u as zero 
+v=0; % defines value of v as zero 
+% u and v = 0 due to lagrangian equation for velocity: V = ui+vj=0 
+u= 0.5 + 0.8*x; % defines equation for u and x
+v = 1.5 - 0.8*y; % defines equation for v and y 
+% find the values for x and y 
+X=solve(u,x); % solves equation u for variable x in fraction form
+Y=solve(v,y); % solves equation v for variable y in fraction form
+% displays solution as a string with values as decimals instead of fractions 
+stangnant_point =sprintf('x= %.15gm and y=%.15gm',X, Y)
+
+clc;
+%% Create a 2D vector plot%%
+% create meshgrid for x and y by defining the values 
+%for x and y, fluid domain of interest, and select
+% increments best suited for graph 
+[x,y] = meshgrid(-3:.5:3,-1:.5:5); %m 
+% defining the equations of the model of flow of the two fluid 
+u= 0.5 + 0.8*x;
+v = 1.5 - 0.8*y;
+%to plot vectors use the command quiver and hold on to allow for input of
+%stream lines to same graph
+hold on;
+quiver(x,y,u,v);
+%since the flow is steady the u,v not dependent on time streamlines and
+%pathlines are the same 
+% Define the level set function F (for streamlines)
+  F = (1.5-0.8*y)*(0.5+0.8*x);
+% Define the 20 levels required for the streamlines
+ C = 0:1:20;
+ % Plot the contours where F = C(1), F = C(2), ...
+ contour(x,y,F,C, 'LineColor','r')
+xlabel('x,m');
+ylabel('y,m');
+title('Steady flow of opposite impinging streams');
+hold off;
