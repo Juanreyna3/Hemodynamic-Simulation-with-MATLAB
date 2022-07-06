@@ -1,0 +1,53 @@
+figure()
+L = 10; %cm
+R_0 = 1.5; %cm
+StudentID = [56, 12, 17]; %last two digits of group's student ID numbers
+U_0 = mean(StudentID); %cm
+ 
+%equations that model the flow in the converging section
+ 
+%{
+from the assumption that the flow is steady, the derivatives of the 
+equations that define the flow with respect to time ('du/dt'and 'dv/dt') 
+must have a sum of zero. 
+from this, the constants 'a' and 'b' were calculated to have 
+the ratio of 1:2.8333. So, when 'a' obtains the value of 10, 
+'b' correspondingly receives the value of 28.333.
+%}
+a = 10; 
+b = 28.3333;
+ 
+%{
+create the meshgrid of cylindrical coordinates.
+the coordinates are taken to match the given dimensions of the 
+blood vessel geometry (10cm in length and 1.5 cm radii)
+ 
+the 'x' values are said to corresponding to the values of length while the 
+'y' values correspond to the varying radii lengths (distance from the 
+middle of the cross-sectional area of the converging cylinder)
+%}
+ 
+[x,y] = meshgrid(0:0.5:10,-1.5:.15:1.5);
+u = U_0*(((a.*x)/L)+1); 
+v = -b.*y;
+ 
+%create the 2D vector plot of the flow field
+quiver(x,y,u,v);
+daspect([1 1 1]);
+ 
+%because we will superimpose streamlines/ if not here quiver plot is lost
+hold on        
+xlabel('x (cm)');
+ylabel('y (cm)');
+%axes are consistent with the measurements of the system
+axis([0 10 -1.5 1.5]);
+ 
+%Plot 20 streamlines for the flow fluid
+x1 = linspace(0,10,20);
+y1 = linspace(-1.5,-1.5,20);
+ 
+x2 = linspace(0,10,20);
+y2 = linspace(1.5,1.5,20);
+ 
+streamline(x,y,u,v,x1,y1);
+streamline(x,y,u,v,x2,y2);
